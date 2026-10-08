@@ -131,6 +131,29 @@ void main() async {
     expect(decrypted, equals(source));
   });
 
+  test('Decrypt empty data', () async {
+    final key = CryptoUtil.generateKey();
+    final encrypted = await CryptoUtil.encryptData(Uint8List(0), key);
+    final cipher = encrypted.encryptedData!;
+    final header = encrypted.header!;
+
+    expect(await CryptoUtil.decryptData(cipher, key, header), isEmpty);
+    await expectLater(
+      CryptoUtil.decryptData(Uint8List(0), key, header),
+      throwsA(anything),
+    );
+    await expectLater(
+      CryptoUtil.decryptData(cipher, CryptoUtil.generateKey(), header),
+      throwsA(isA<SodiumException>()),
+    );
+
+    cipher[0] ^= 1;
+    await expectLater(
+      CryptoUtil.decryptData(cipher, key, header),
+      throwsA(isA<SodiumException>()),
+    );
+  });
+
   test('Check generated keypair', () async {
     final keyPair = CryptoUtil.generateKeyPair();
     expect(keyPair.publicKey, isNotNull);
