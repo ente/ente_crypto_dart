@@ -256,9 +256,9 @@ Future<Uint8List> chachaDecryptData(
     return Uint8List(0);
   }
 
-  return result.reduce((a, b) => Uint8List.fromList(
-        a.toList()..addAll(b.toList()),
-      ));
+  return result.reduce(
+    (a, b) => Uint8List.fromList(a.toList()..addAll(b.toList())),
+  );
 }
 
 // Encrypts a file with MD5 calculation and real-time verification
